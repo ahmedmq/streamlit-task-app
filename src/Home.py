@@ -14,6 +14,7 @@ if 'counter' not in st.session_state:
 def submit():
     new_task = st.session_state["task"]
     if new_task:
+        st.write(f'New task: {new_task} with date: {task_date} and time: {task_time} and priority: {task_priority}')
         tasks.append(new_task)
         st.session_state["task"] = ""
 
@@ -22,21 +23,25 @@ st.text_input("Enter a task: 🚀", placeholder="Add Task", key="task", on_chang
 with st.expander("ℹ️"):
     date_col, time_col = st.columns(2)
     with date_col:
-        st.date_input("Due Date: 📅", key="date")
+        task_date = st.date_input("Due Date: 📅", key="date")
     with time_col:
-        st.time_input("Due Time: ⏰", key="time")
-    st.selectbox("Priority: ⭐", ["High", "Medium", "Low"], key="priority")
+        task_time = st.time_input("Due Time: ⏰", key="time")
+    task_priority = st.selectbox("Priority: ❗️", ["High", "Medium", "Low"], key="priority")
 
 for i, task in enumerate(tasks):
-    checkbox = st.checkbox(task, key=i)
-    st.markdown("""
-        <style>
-            input[aria-checked="true"] + div.st-ic p {
-            text-decoration: line-through;
-            font-style: italic;
-         }
-        </style>    
-    """, unsafe_allow_html=True)
+    check_col, priority_col = st.columns(2)
+    with check_col:
+        checkbox = st.checkbox(task, key=i)
+        st.markdown("""
+            <style>
+                input[aria-checked="true"] + div div[data-testid="stMarkdownContainer"] p {
+                text-decoration: line-through;
+                font-style: italic;
+             }
+            </style>    
+        """, unsafe_allow_html=True)
+    with priority_col:
+        st.write(f'Priority: {task_priority}')
 
 st.components.v1.html(
     f"""
