@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streamlit-task-app
+  labels:
+    component: streamlit-task-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: streamlit-task-app
+  template:
+    metadata:
+      labels:
+        component: streamlit-task-app
+    spec:
+      containers:
+      - name: streamlit-task-app
+        image: ahmedmq/streamlit-task-app:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8501
+        resources:
+          limits:
+            cpu: 1
+            memory: 1Gi
+          requests:
+            cpu: 1
+            memory: 1Gi
