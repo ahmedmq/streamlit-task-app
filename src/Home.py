@@ -5,18 +5,19 @@ from firestore_services import (
     get_tasks,
     update_task,
 )
+from Task import Task
 
 
 def update_complete(task):
-    task['completed'] = not task['completed']
-    update_task(task['id'], task['completed'])
+    task.completed = not task.completed
+    update_task(task)
 
 
 def display_tasks():
     for i, task in enumerate(tasks):
         check_col, priority_col = st.columns(2)
         with check_col:
-            checkbox = st.checkbox(task['title'], key=i, value=task['completed'], on_change=update_complete, args=(task,))
+            checkbox = st.checkbox(task.title, key=i, value=task.completed, on_change=update_complete, args=(task,))
             st.markdown("""
                 <style>
                     input[aria-checked="true"] + div div[data-testid="stMarkdownContainer"] p {
@@ -26,7 +27,7 @@ def display_tasks():
                 </style>    
             """, unsafe_allow_html=True)
         with priority_col:
-            st.write(f'Priority: {task["priority"]}')
+            st.write(f'Priority: {task.priority}')
 
 
 tasks = get_tasks()
@@ -38,7 +39,7 @@ def submit():
     task = st.session_state["title"]
     if task:
         due_date = f'{new_task_date} {new_task_time}'
-        add_task(title=task, priority=new_task_priority, project="Home", due_date=due_date, completed=False)
+        add_task(Task(None, task, "Home", new_task_priority, False, due_date))
         tasks.append(task)
         st.session_state["title"] = ""
 

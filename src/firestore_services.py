@@ -1,6 +1,8 @@
 import firebase_admin
 from firebase_admin import firestore, credentials
 
+from Task import Task
+
 cred = credentials.Certificate("firestore-key.json")
 
 if not firebase_admin._apps:
@@ -11,28 +13,19 @@ db = firestore.client(app)
 tasks_ref = db.collection(u'tasks')
 
 
-def add_task(**kwargs):
+def add_task(task):
     ref = tasks_ref.document()
-    ref.set({
-        u'id': ref.id,
-        u'title': kwargs.pop('title'),
-        u'priority': kwargs.pop('priority'),
-        u'project': kwargs.pop('project'),
-        u'due_date': kwargs.pop('due_date'),
-        u'completed': kwargs.pop('completed')
-    })
+    task.id = ref.id
+    ref.set(task.to_dict())
 
 
 def get_tasks():
     tasks = []
     for doc in tasks_ref.stream():
-        tasks.append(doc.to_dict())
+        tasks.append(Task.from_dict(doc.to_dict()))
     return tasks
 
 
-def update_task(task_id, completed):
-    doc_ref = tasks_ref.document(task_id)
-    doc_ref.update({
-        u'completed': completed,
-        u'priority': 'Low'
-    })
+def update_task(task):
+    doc_ref = tasks_ref.document(task.id)
+    doc_ref.update(task.to_dict())
