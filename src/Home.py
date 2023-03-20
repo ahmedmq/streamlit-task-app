@@ -1,8 +1,23 @@
 import streamlit as st
 from streamlit.components.v1 import components
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+cred = credentials.Certificate("firestore-key.json")
+
+if not firebase_admin._apps:
+    firebase_admin.initialize_app(cred)
+
+app = firebase_admin.get_app()
+db = firestore.client(app)
 
 if 'todo_list' not in st.session_state:
     tasks = []
+    posts_ref = db.collection(u'tasks')
+    for doc in posts_ref.stream():
+        task = doc.to_dict()
+        tasks.append(task['task'])
     st.session_state.todo_list = tasks
 else:
     tasks = st.session_state.todo_list
@@ -12,10 +27,13 @@ if 'counter' not in st.session_state:
 
 
 def submit():
-    new_task = st.session_state["task"]
-    if new_task:
-        st.write(f'New task: {new_task} with date: {task_date} and time: {task_time} and priority: {task_priority}')
-        tasks.append(new_task)
+    task = st.session_state["task"]
+    if task:
+        tasks.append(task)
+        doc_ref = db.collection(u'tasks').document()
+        # format the task date and task time as a datetime object
+        due_date = f'{task_date} {task_time}'
+        doc_ref.set({"task": task, "due_date": due_date, "priority": task_priority})
         st.session_state["task"] = ""
 
 
