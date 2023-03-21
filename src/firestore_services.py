@@ -34,6 +34,7 @@ def find_all(flag_dict):
 def update(task):
     doc_ref = tasks_ref.document(task.id)
     doc_ref.update(task.to_dict())
+    # TODO: Render message on bottom of page
     st.success('Great Job! 👏')
 
 

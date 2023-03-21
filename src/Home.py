@@ -9,7 +9,7 @@ from firestore_services import (
 )
 from Task import Task
 
-# st.set_page_config(page_title='Home', layout='wide')
+st.set_page_config(page_title='Home', layout='wide')
 
 completed_flag = st.checkbox('Show completed tasks', key='show_completed', value=False)
 
@@ -42,6 +42,7 @@ def display_tasks():
         check_col, priority_col, due_date_col, action_col = st.columns((0.5, 0.1, 0.3, 0.1))
         with check_col:
             checkbox = st.checkbox(task.title, key=i, value=task.completed, on_change=update_complete, args=(task,))
+            # FIXME: only strike through the display tasks and not all checkboxes
             st.markdown("""
                 <style>
                     input[aria-checked="true"] + div div[data-testid="stMarkdownContainer"] p {
@@ -56,7 +57,9 @@ def display_tasks():
                     f"""{'~~_**:red[High]**_~~' if task.priority == 'High' else '~~_**:orange[Medium]**_~~' if task.priority == 'Medium' else '~~_**:green[Low]**_~~'}""",
                     unsafe_allow_html=True)
             else:
-                st.markdown(f"""{'**:red[High]**' if task.priority == 'High' else '**:orange[Medium]**' if task.priority == 'Medium' else '**:green[Low]**'}""", unsafe_allow_html=True)
+                st.markdown(
+                    f"""{'**:red[High]**' if task.priority == 'High' else '**:orange[Medium]**' if task.priority == 'Medium' else '**:green[Low]**'}""",
+                    unsafe_allow_html=True)
         with due_date_col:
             if checkbox:
                 st.markdown(
@@ -68,7 +71,10 @@ def display_tasks():
             st.button("❌", key=task.id, on_click=delete, args=(task,))
 
 
-tasks = find_all({'completed': completed_flag, 'deleted_flag': False})
+if completed_flag:
+    tasks = find_all({'deleted_flag': False})
+else:
+    tasks = find_all({'completed': False, 'deleted_flag': False})
 if 'counter' not in st.session_state:
     st.session_state['counter'] = 0
 
@@ -82,6 +88,7 @@ def submit():
         st.session_state["title"] = ""
 
 
+# TODO: Make this textbox a form and bigger?
 st.text_input("Enter a task: 🚀", placeholder="Add Task", key="title", on_change=submit)
 with st.expander("ℹ️"):
     date_col, time_col = st.columns(2)
