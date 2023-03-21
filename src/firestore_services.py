@@ -1,6 +1,7 @@
 import firebase_admin
 from firebase_admin import firestore, credentials
 import streamlit as st
+import datetime
 
 from Task import Task
 
@@ -20,9 +21,12 @@ def save(task):
     ref.set(task.to_dict())
 
 
-def find_all():
+def find_all(flag_dict):
     tasks = []
-    for doc in tasks_ref.stream():
+    query = tasks_ref
+    for key, value in flag_dict.items():
+        query = query.where(key, u'==', value)
+    for doc in query.stream():
         tasks.append(Task.from_dict(doc.to_dict()))
     return tasks
 
@@ -30,9 +34,12 @@ def find_all():
 def update(task):
     doc_ref = tasks_ref.document(task.id)
     doc_ref.update(task.to_dict())
+    st.success('Great Job! 👏')
 
 
 def delete(task):
+    task.deleted_at = datetime.datetime.now()
+    task.deleted_flag = True
     doc_ref = tasks_ref.document(task.id)
-    doc_ref.delete()
+    doc_ref.update(task.to_dict())
     st.success('Task Deleted successfully')

@@ -11,6 +11,8 @@ from Task import Task
 
 # st.set_page_config(page_title='Home', layout='wide')
 
+completed_flag = st.checkbox('Show completed tasks', key='show_completed', value=False)
+
 st.markdown("""
     <style>
     div.stAlert > div:first-child {
@@ -66,7 +68,7 @@ def display_tasks():
             st.button("❌", key=task.id, on_click=delete, args=(task,))
 
 
-tasks = find_all()
+tasks = find_all({'completed': completed_flag, 'deleted_flag': False})
 if 'counter' not in st.session_state:
     st.session_state['counter'] = 0
 
