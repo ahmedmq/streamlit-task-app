@@ -13,19 +13,24 @@ db = firestore.client(app)
 tasks_ref = db.collection(u'tasks')
 
 
-def add_task(task):
+def save(task):
     ref = tasks_ref.document()
     task.id = ref.id
     ref.set(task.to_dict())
 
 
-def get_tasks():
+def find_all():
     tasks = []
     for doc in tasks_ref.stream():
         tasks.append(Task.from_dict(doc.to_dict()))
     return tasks
 
 
-def update_task(task):
+def update(task):
     doc_ref = tasks_ref.document(task.id)
     doc_ref.update(task.to_dict())
+
+
+def delete(task):
+    doc_ref = tasks_ref.document(task.id)
+    doc_ref.delete()

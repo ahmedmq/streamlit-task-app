@@ -1,21 +1,23 @@
 import streamlit as st
 from streamlit.components.v1 import components
 from firestore_services import (
-    add_task,
-    get_tasks,
-    update_task,
+    save,
+    find_all,
+    update, delete,
 )
 from Task import Task
+
+# st.set_page_config(page_title='Home', layout='wide')
 
 
 def update_complete(task):
     task.completed = not task.completed
-    update_task(task)
+    update(task)
 
 
 def display_tasks():
     for i, task in enumerate(tasks):
-        check_col, priority_col = st.columns(2)
+        check_col, priority_col, due_date_col, action_col = st.columns((0.5, 0.2, 0.2, 0.1))
         with check_col:
             checkbox = st.checkbox(task.title, key=i, value=task.completed, on_change=update_complete, args=(task,))
             st.markdown("""
@@ -27,10 +29,14 @@ def display_tasks():
                 </style>    
             """, unsafe_allow_html=True)
         with priority_col:
-            st.write(f'Priority: {task.priority}')
+            st.write(task.priority)
+        with due_date_col:
+            st.write(task.due_date)
+        with action_col:
+            st.button("❌", key=task.id, on_click=delete, args=(task,))
 
 
-tasks = get_tasks()
+tasks = find_all()
 if 'counter' not in st.session_state:
     st.session_state['counter'] = 0
 
@@ -39,7 +45,7 @@ def submit():
     task = st.session_state["title"]
     if task:
         due_date = f'{new_task_date} {new_task_time}'
-        add_task(Task(None, task, "Home", new_task_priority, False, due_date))
+        save(Task(None, task, "Home", new_task_priority, False, due_date))
         tasks.append(task)
         st.session_state["title"] = ""
 
@@ -55,6 +61,7 @@ with st.expander("ℹ️"):
 
 display_tasks()
 
+# Hack to focus on the text input
 st.components.v1.html(
     f"""
         <script>
