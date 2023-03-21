@@ -1,7 +1,7 @@
+import datetime
+
 import firebase_admin
 from firebase_admin import firestore, credentials
-import streamlit as st
-import datetime
 
 from Task import Task
 
@@ -34,8 +34,6 @@ def find_all(flag_dict):
 def update(task):
     doc_ref = tasks_ref.document(task.id)
     doc_ref.update(task.to_dict())
-    # TODO: Render message on bottom of page
-    st.success('Great Job! 👏')
 
 
 def delete(task):
@@ -43,4 +41,3 @@ def delete(task):
     task.deleted_flag = True
     doc_ref = tasks_ref.document(task.id)
     doc_ref.update(task.to_dict())
-    st.success('Task Deleted successfully')

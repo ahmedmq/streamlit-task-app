@@ -13,24 +13,6 @@ st.set_page_config(page_title='Home', layout='wide')
 
 completed_flag = st.checkbox('Show completed tasks', key='show_completed', value=False)
 
-st.markdown("""
-    <style>
-    div.stAlert > div:first-child {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        animation: hideDiv 5s forwards;
-    }
-    @keyframes hideDiv {
-      to {
-        opacity: 0;
-        visibility: hidden;
-      }
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-
 def update_complete(task):
     task.completed = not task.completed
     task.completed_at = datetime.datetime.now()
@@ -45,7 +27,7 @@ def display_tasks():
             # FIXME: only strike through the display tasks and not all checkboxes
             st.markdown("""
                 <style>
-                    input[aria-checked="true"] + div div[data-testid="stMarkdownContainer"] p {
+                    input[aria-checked="true"]:not([aria-label="Show completed tasks"]) + div div[data-testid="stMarkdownContainer"] p {
                     text-decoration: line-through;
                     font-style: italic;
                  }
@@ -80,23 +62,38 @@ if 'counter' not in st.session_state:
 
 
 def submit():
-    task = st.session_state["title"]
-    if task:
-        due_date = f'{new_task_date} {new_task_time}'
-        save(Task(None, task, "Home", new_task_priority, False, due_date))
-        tasks.append(task)
-        st.session_state["title"] = ""
+    due_date = f'{new_task_date} {new_task_time}'
+    new_task = Task(None, new_task_title, new_task_project, new_task_priority, False, due_date)
+    save(new_task)
+    tasks.append(new_task)
 
 
-# TODO: Make this textbox a form and bigger?
-st.text_input("Enter a task: 🚀", placeholder="Add Task", key="title", on_change=submit)
-with st.expander("ℹ️"):
-    date_col, time_col = st.columns(2)
-    with date_col:
-        new_task_date = st.date_input("Due Date: 📅", key="date")
-    with time_col:
-        new_task_time = st.time_input("Due Time: ⏰", key="time")
-    new_task_priority = st.selectbox("Priority: ❗️", ["High", "Medium", "Low"], key="priority")
+with st.form(key='new_task_form'):
+    row1, row2 = st.columns((9, 1))
+    with row1:
+        new_task_title = st.text_input("Enter a task: 📝", placeholder="Add Task", key="title")
+        with st.expander("ℹ️"):
+            row_3, row_4 = st.columns(2)
+            with row_3:
+                new_task_priority = st.selectbox("Priority: ❗️", ["High", "Medium", "Low"], key="priority")
+                new_task_date = st.date_input("Due Date: 📅", key="date")
+            with row_4:
+                new_task_project = st.text_input("Project: 📁", key="project")
+                new_task_time = st.time_input("Due Time: ⏰", key="time")
+
+    with row2:
+        submitted = st.form_submit_button("Submit 🚀", use_container_width=True)
+        st.markdown("""
+            <style>
+            div.stButton > button[kind=secondaryFormSubmit] {
+               height: 40px;
+               margin-top: 32px;
+               background-color: green;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+        if submitted:
+            submit()
 
 display_tasks()
 
