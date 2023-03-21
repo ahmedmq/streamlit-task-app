@@ -1,5 +1,6 @@
 import firebase_admin
 from firebase_admin import firestore, credentials
+import streamlit as st
 
 from Task import Task
 
@@ -34,3 +35,4 @@ def update(task):
 def delete(task):
     doc_ref = tasks_ref.document(task.id)
     doc_ref.delete()
+    st.success('Task Deleted successfully')

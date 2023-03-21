@@ -1,3 +1,5 @@
+import datetime
+
 import streamlit as st
 from streamlit.components.v1 import components
 from firestore_services import (
@@ -9,15 +11,33 @@ from Task import Task
 
 # st.set_page_config(page_title='Home', layout='wide')
 
+st.markdown("""
+    <style>
+    div.stAlert > div:first-child {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        animation: hideDiv 5s forwards;
+    }
+    @keyframes hideDiv {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 
 def update_complete(task):
     task.completed = not task.completed
+    task.completed_at = datetime.datetime.now()
     update(task)
 
 
 def display_tasks():
     for i, task in enumerate(tasks):
-        check_col, priority_col, due_date_col, action_col = st.columns((0.5, 0.2, 0.2, 0.1))
+        check_col, priority_col, due_date_col, action_col = st.columns((0.5, 0.1, 0.3, 0.1))
         with check_col:
             checkbox = st.checkbox(task.title, key=i, value=task.completed, on_change=update_complete, args=(task,))
             st.markdown("""
@@ -29,9 +49,19 @@ def display_tasks():
                 </style>    
             """, unsafe_allow_html=True)
         with priority_col:
-            st.write(task.priority)
+            if checkbox:
+                st.markdown(
+                    f"""{'~~_**:red[High]**_~~' if task.priority == 'High' else '~~_**:orange[Medium]**_~~' if task.priority == 'Medium' else '~~_**:green[Low]**_~~'}""",
+                    unsafe_allow_html=True)
+            else:
+                st.markdown(f"""{'**:red[High]**' if task.priority == 'High' else '**:orange[Medium]**' if task.priority == 'Medium' else '**:green[Low]**'}""", unsafe_allow_html=True)
         with due_date_col:
-            st.write(task.due_date)
+            if checkbox:
+                st.markdown(
+                    f"""~~_{task.due_date}_~~""",
+                    unsafe_allow_html=True)
+            else:
+                st.markdown(f"""{task.due_date}""", unsafe_allow_html=True)
         with action_col:
             st.button("❌", key=task.id, on_click=delete, args=(task,))
 
