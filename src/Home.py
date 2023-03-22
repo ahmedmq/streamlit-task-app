@@ -44,7 +44,7 @@ def update_complete(task):
 
 def display_tasks():
     for i, task in enumerate(tasks):
-        check_col, priority_col, due_date_col, action_col = st.columns((0.5, 0.1, 0.3, 0.1))
+        row_spacer, check_col, priority_col, due_date_col, action_col = st.columns((0.02, 0.48, 0.1, 0.3, 0.1))
         with check_col:
             checkbox = st.checkbox(task.title, key=i, value=task.completed, on_change=update_complete, args=(task,))
             # FIXME: only strike through the display tasks and not all checkboxes

@@ -12,7 +12,7 @@ This repository contains code for a simple Task management application.
 
 4. [Kubernetes](https://kubernetes.io/) is used to deploy the application
 
-5. [TestContainers](https://github.com/testcontainers/testcontainers-python) is used to run integration tests
+5. [Plotly Express](https://plotly.com/python/plotly-express/) is used to display graphs
 
 
 ## Overview
