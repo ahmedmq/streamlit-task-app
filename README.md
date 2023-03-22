@@ -130,7 +130,7 @@ After you have forked this repository, you can use the workflow as is. You will 
 
 ## Application Screenshots
 
-- Simple Form to create a new task:
+- Simple Form to create a new task and display the list of tasks:
 
     ![Home Page](static/create_new_task.png)
 

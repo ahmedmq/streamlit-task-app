@@ -14,6 +14,9 @@ from Task import Task
 
 st.set_page_config(page_title='Home', layout='wide')
 
+st.title('✅ Streamlit Task Application')
+
+st.info("Use the below checkbox to also display tasks that have been completed.")
 completed_flag = st.checkbox('Show completed tasks', key='show_completed', value=False)
 
 
@@ -59,7 +62,7 @@ def display_tasks():
         with priority_col:
             if checkbox:
                 st.markdown(
-                    f"""{'~~_**:red[High]**_~~' if task.priority == 'High' 
+                    f"""{'~~_**:red[High]**_~~' if task.priority == 'High'
                     else '~~_**:orange[Medium]**_~~' if task.priority == 'Medium' else '~~_**:green[Low]**_~~'}""",
                     unsafe_allow_html=True)
             else:
