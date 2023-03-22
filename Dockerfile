@@ -12,5 +12,4 @@ HEALTHCHECK --interval=5m --timeout=3s \
 FROM code AS prod
 EXPOSE 8501
 ENV PYTHONPATH "${PYTHONPATH}:/app/"
-ENTRYPOINT ["streamlit", "run"]
-CMD ["Home.py"]
+ENTRYPOINT ["streamlit", "run", "Home.py", "--server.fileWatcherType=none"]
