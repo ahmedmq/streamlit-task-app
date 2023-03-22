@@ -5,10 +5,8 @@ from firebase_admin import firestore, credentials
 
 from Task import Task
 
-cred = credentials.Certificate("firestore-key.json")
-
 if not firebase_admin._apps:
-    firebase_admin.initialize_app(cred)
+    firebase_admin.initialize_app()
 
 app = firebase_admin.get_app()
 db = firestore.client(app)
