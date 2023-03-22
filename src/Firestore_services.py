@@ -1,7 +1,7 @@
 import datetime
 
 import firebase_admin
-from firebase_admin import firestore, credentials
+from firebase_admin import firestore
 
 from Task import Task
 

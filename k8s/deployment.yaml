@@ -21,6 +21,9 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8501
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /tmp/keys/keys.json
         resources:
           limits:
             cpu: 1
@@ -28,3 +31,14 @@ spec:
           requests:
             cpu: 1
             memory: 1Gi
+        volumeMounts:
+        - name: streamlit-task-app-volume
+          mountPath: /tmp/keys
+          readOnly: true
+      volumes:
+      - name: streamlit-task-app-volume
+        secret:
+          secretName: streamlit-task-app-secret
+          items:
+          - key: cred_json_file
+            path: keys.json

@@ -5,7 +5,7 @@ import streamlit as st
 import plotly.express as px
 from faker import Faker
 from streamlit.components.v1 import components
-from firestore_services import (
+from Firestore_services import (
     save,
     find_all,
     update, delete,
@@ -97,7 +97,7 @@ with st.form(key='new_task_form'):
     row1, row2 = st.columns((9, 1))
     with row1:
         new_task_title = st.text_input("Enter a task: 📝", placeholder="Add Task", key="title")
-        with st.expander("ℹ️"):
+        with st.expander("ℹ️ Details (click to expand)"):
             row_3, row_4 = st.columns(2)
             with row_3:
                 new_task_priority = st.selectbox("Priority: ❗️", ["High", "Medium", "Low"], key="priority")
@@ -136,7 +136,7 @@ st.components.v1.html(
     height=1
 )
 
-with st.expander(" 📈Visualize your tasks"):
+with st.expander(" 📈 Visualize your tasks (click to expand)"):
     st.info(
         'Use the below checkbox to generate fake tasks. This is to demonstrate the '
         'functionality of the visualizations.')
